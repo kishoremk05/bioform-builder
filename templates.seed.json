@@ -1,0 +1,68 @@
+[
+  {
+    "id": "classic-brown-border",
+    "title": "Classic Brown Border",
+    "tag": "Most popular",
+    "description": "Traditional look with neat sections and elegant hierarchy.",
+    "image": "https://biodatamaker.app/_next/image?url=%2Fimages%2Fexamples%2Fwhite-brown-theme-marriage-biodata-sample-format-girl.png&w=640&q=75",
+    "order": 1,
+    "accentClassName": "from-[#f8eee4] via-[#f3dfcf] to-[#ead2be]",
+    "frameClassName": "border-[#cf9e76]",
+    "contentClassName": "bg-[#fffaf5]"
+  },
+  {
+    "id": "modern-ivory",
+    "title": "Modern Ivory",
+    "tag": "Premium",
+    "description": "Minimal and high-contrast layout for a clean one-page biodata.",
+    "image": "https://biodatamaker.app/_next/image?url=%2Fimages%2Fexamples%2Fpopular-hindu-marriage-biodata-format.png&w=640&q=75",
+    "order": 2,
+    "accentClassName": "from-[#f7f2ea] via-[#eadbc6] to-[#f6eee5]",
+    "frameClassName": "border-[#d1aa6e]",
+    "contentClassName": "bg-[#fffdfa]"
+  },
+  {
+    "id": "royal-blue-arch",
+    "title": "Royal Blue Arch",
+    "tag": "New",
+    "description": "A bold showcase layout with a formal portrait-first presentation.",
+    "image": "https://biodatamaker.app/_next/image?url=%2Fimages%2Fexamples%2Felegant-marriage-biodata-sample-boy.png&w=640&q=75",
+    "order": 3,
+    "accentClassName": "from-[#eef2f8] via-[#dde7f4] to-[#f5f0ec]",
+    "frameClassName": "border-[#99a8bf]",
+    "contentClassName": "bg-[#fcfbfa]"
+  },
+  {
+    "id": "maroon-classic",
+    "title": "Maroon Classic",
+    "tag": "Trending",
+    "description": "A rich traditional card for detailed family and personal sections.",
+    "image": "https://biodatamaker.app/_next/image?url=%2Fimages%2Fexamples%2Fwhite-brown-theme-marriage-biodata-sample-format-girl.png&w=640&q=75",
+    "order": 4,
+    "accentClassName": "from-[#f6e7e4] via-[#efd8d2] to-[#f9ece8]",
+    "frameClassName": "border-[#c89d90]",
+    "contentClassName": "bg-[#fff9f8]"
+  },
+  {
+    "id": "rose-elegance",
+    "title": "Rose Elegance",
+    "tag": "Editor pick",
+    "description": "Soft feminine tones with a polished portrait-led biodata layout.",
+    "image": "https://biodatamaker.app/_next/image?url=%2Fimages%2Fexamples%2Fwhite-brown-theme-marriage-biodata-sample-format-girl.png&w=640&q=75",
+    "order": 5,
+    "accentClassName": "from-[#f8ecef] via-[#f0d8e1] to-[#f8eff3]",
+    "frameClassName": "border-[#d7b4c0]",
+    "contentClassName": "bg-[#fffafc]"
+  },
+  {
+    "id": "heritage-gold",
+    "title": "Heritage Gold",
+    "tag": "Classic",
+    "description": "Warm gold detailing for a family-friendly biodata presentation.",
+    "image": "https://biodatamaker.app/_next/image?url=%2Fimages%2Fexamples%2Fpopular-hindu-marriage-biodata-format.png&w=640&q=75",
+    "order": 6,
+    "accentClassName": "from-[#f8f0df] via-[#f0dfb9] to-[#f9f4e7]",
+    "frameClassName": "border-[#d2b26f]",
+    "contentClassName": "bg-[#fffdf8]"
+  }
+]

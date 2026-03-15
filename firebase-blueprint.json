@@ -15,12 +15,32 @@
         "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
       },
       "required": ["fullName", "email", "createdAt"]
+    },
+    "Template": {
+      "title": "Template",
+      "description": "Marriage biodata template metadata used for the homepage carousel",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string", "description": "Display title of the template" },
+        "tag": { "type": "string", "description": "Short badge such as Premium or New" },
+        "description": { "type": "string", "description": "Short marketing description for the template" },
+        "image": { "type": "string", "description": "Public image URL used for the template preview" },
+        "order": { "type": "number", "description": "Sort order for the carousel" },
+        "accentClassName": { "type": "string", "description": "Tailwind gradient classes for the card background" },
+        "frameClassName": { "type": "string", "description": "Tailwind border color class for the image frame" },
+        "contentClassName": { "type": "string", "description": "Tailwind background color class for the image area" }
+      },
+      "required": ["title", "image"]
     }
   },
   "firestore": {
     "/biodata/{docId}": {
       "schema": "Biodata",
       "description": "Collection of user biodata"
+    },
+    "/templates/{docId}": {
+      "schema": "Template",
+      "description": "Homepage template carousel items loaded from Firestore"
     }
   }
 }

@@ -53,6 +53,21 @@ Create a Firestore collection named biodata with documents containing:
 - userId
 - createdAt
 
+Create a Firestore collection named templates to power the homepage carousel. Each document can contain:
+
+- title
+- tag
+- description
+- image
+- order
+- accentClassName
+- frameClassName
+- contentClassName
+
+Only title and image are required. If the templates collection is empty or unavailable, the homepage falls back to built-in sample templates.
+
+Seed-ready template documents are included in `templates.seed.json`.
+
 ## Run Locally
 
 1. Install dependencies:

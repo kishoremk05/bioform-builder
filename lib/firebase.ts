@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import appletConfig from '../firebase-applet-config.json';
  
 const isPlaceholder = (value: string | undefined) => {
@@ -57,6 +58,7 @@ export const db = firestoreDatabaseId
   ? getFirestore(app, firestoreDatabaseId)
   : getFirestore(app);
 export const auth = getAuth(app);
+export const storage = getStorage(app);
 
 export enum OperationType {
   CREATE = 'create',

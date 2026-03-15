@@ -8,14 +8,37 @@
 
 html,
 body {
-	background: radial-gradient(circle at 12% -10%, #ffe9d4 0%, transparent 32%),
-		radial-gradient(circle at 88% 12%, #fde9d8 0%, transparent 30%),
+	background: radial-gradient(circle at 14% -8%, #ffe3d1 0%, transparent 34%),
+		radial-gradient(circle at 86% 14%, #f3efe7 0%, transparent 28%),
 		var(--bg-base);
 	color: var(--ink-strong);
 }
 
 .landing-root section {
 	animation: rise-in 0.55s ease both;
+}
+
+.no-scrollbar {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+.hero-ribbon {
+	background:
+		radial-gradient(circle at 16% 24%, rgba(184, 95, 214, 0.92) 0%, rgba(184, 95, 214, 0.92) 17%, transparent 42%),
+		radial-gradient(circle at 34% 74%, rgba(255, 132, 96, 0.88) 0%, rgba(255, 132, 96, 0.88) 18%, transparent 41%),
+		radial-gradient(circle at 60% 34%, rgba(247, 182, 89, 0.9) 0%, rgba(247, 182, 89, 0.9) 24%, transparent 46%),
+		radial-gradient(circle at 86% 36%, rgba(111, 189, 205, 0.88) 0%, rgba(111, 189, 205, 0.88) 22%, transparent 45%),
+		linear-gradient(118deg, #ce83cb 0%, #f8b55d 54%, #88c2cb 100%);
+}
+
+.hero-cut {
+	transform: skewY(-7deg);
+	transform-origin: left top;
 }
 
 @keyframes rise-in {
