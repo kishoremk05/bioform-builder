@@ -398,42 +398,10 @@ const BiodataForm = () => {
         createdAt: serverTimestamp(),
       };
 
-      const legacyPayload = {
-        fullName: formData.fullName,
-        email: formData.email,
-        phone: formData.contactNumber || null,
-        address: formData.address || null,
-        education: formData.education || null,
-        skills: formData.hobbies || null,
-        experience: formData.expectations || null,
-        userId: activeUser.uid,
-        authEmail: activeUser.email ?? null,
-        createdAt: serverTimestamp(),
-      };
-
-      try {
-        await withTimeout(
-          addDoc(collection(db, path), primaryPayload),
-          "Biodata save",
-        );
-      } catch (createError) {
-        const errCode =
-          typeof createError === "object" &&
-          createError !== null &&
-          "code" in createError
-            ? String((createError as { code: unknown }).code)
-            : "";
-
-        // Fallback keeps app usable when stricter/new rules are not deployed yet.
-        if (errCode === "permission-denied") {
-          await withTimeout(
-            addDoc(collection(db, path), legacyPayload),
-            "Biodata save fallback",
-          );
-        } else {
-          throw createError;
-        }
-      }
+      await withTimeout(
+        addDoc(collection(db, path), primaryPayload),
+        "Biodata save",
+      );
 
       if (uploadedPhotoUrl) {
         setPhotoPreviewUrl((current) => {
@@ -474,8 +442,16 @@ const BiodataForm = () => {
           : "Biodata submitted and saved to Firestore successfully!",
       });
     } catch (error) {
+      const errCode =
+        typeof error === "object" && error !== null && "code" in error
+          ? String((error as { code: unknown }).code)
+          : "";
       const errMessage =
-        error instanceof Error ? error.message : "Failed to save biodata.";
+        errCode === "permission-denied"
+          ? "Permission denied while saving full biodata. Please update Firestore rules for the active database and try again."
+          : error instanceof Error
+            ? error.message
+            : "Failed to save biodata.";
       setMessage({ type: "error", text: errMessage });
       try {
         handleFirestoreError(error, OperationType.CREATE, path);

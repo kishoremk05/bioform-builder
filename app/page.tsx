@@ -1,5 +1,13 @@
 import Image from "next/image";
-import { Brush, Facebook, Instagram, LayoutTemplate, Mail, Sparkles, Star } from "lucide-react";
+import {
+  Brush,
+  Facebook,
+  Instagram,
+  LayoutTemplate,
+  Mail,
+  Sparkles,
+  Star,
+} from "lucide-react";
 import BiodataForm from "@/components/BiodataForm";
 import FAQAccordion from "@/components/FAQAccordion";
 import LiveBiodataCount from "@/components/LiveBiodataCount";
@@ -84,31 +92,31 @@ export default function Home() {
         <div className="hero-ribbon absolute inset-x-0 top-0 h-[78%]" />
         <div className="hero-cut absolute -bottom-48 left-0 right-0 z-[1] h-96 bg-white" />
 
-        <div className="relative z-10 mx-auto w-full max-w-7xl px-4 pb-16 pt-6 md:pb-24 md:pt-8">
-          <nav className="flex items-center justify-between py-2">
-            <p className="text-[34px] font-black leading-none tracking-[-0.03em] text-[#2d2433] md:text-[38px]">
+        <div className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-16 pt-6 md:px-8 md:pb-24 md:pt-8 lg:px-10">
+          <nav className="flex items-center justify-between py-1">
+            <p className="text-[28px] font-black leading-none tracking-[-0.03em] text-[#2d2433] md:text-[32px]">
               biodatamaker.app
             </p>
 
             <div className="ml-auto flex items-center gap-3 pr-2 md:gap-7 md:pr-0">
               <a
                 href="#"
-                className="text-[20px] font-bold text-[#2f2c33] md:text-[24px]"
+                className="text-[16px] font-bold text-[#2f2c33] md:text-[18px]"
               >
                 Blog
               </a>
               <a
                 href="#create"
-                className="rounded-full bg-[#ea1f5c] px-6 py-2 text-xs font-bold text-white shadow-[0_8px_22px_rgba(234,31,92,0.3)] transition hover:-translate-y-0.5 hover:bg-[#d41851] md:px-10 md:py-3 md:text-[24px]"
+                className="rounded-full bg-[#ea1f5c] px-5 py-2 text-xs font-bold text-white shadow-[0_8px_22px_rgba(234,31,92,0.3)] transition hover:-translate-y-0.5 hover:bg-[#d41851] md:px-8 md:py-2.5 md:text-[16px]"
               >
                 Create My Biodata
               </a>
             </div>
           </nav>
 
-          <div className="relative mt-8 grid items-start gap-10 md:mt-14 md:grid-cols-[0.96fr_1.04fr] md:gap-6 lg:gap-10">
+          <div className="relative mt-8 grid items-start gap-10 md:mt-14 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-8 lg:gap-10">
             <header className="mx-auto max-w-2xl text-center md:mx-0 md:text-left">
-              <h1 className="text-[42px] font-black leading-[1.06] tracking-[-0.03em] text-[#201f2b] md:text-[74px] lg:text-[80px]">
+              <h1 className="text-[38px] font-black leading-[1.06] tracking-[-0.03em] text-[#201f2b] md:text-[64px] lg:text-[70px]">
                 The Ultimate
                 <br />
                 Marriage Biodata
@@ -116,26 +124,26 @@ export default function Home() {
                 Maker
               </h1>
 
-              <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-[#3c3b45] md:mx-0 md:text-[26px] md:leading-[1.34]">
-                Create beautiful biodata for marriage with just a few clicks! Easy
-                to use, fully customizable, elegantly designed marriage biodata
-                formats
+              <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-[#3c3b45] md:mx-0 md:text-[22px] md:leading-[1.34]">
+                Create beautiful biodata for marriage with just a few clicks!
+                Easy to use, fully customizable, elegantly designed marriage
+                biodata formats
               </p>
 
               <a
                 href="#create"
-                className="mt-12 inline-flex rounded-full bg-[#ea1f5c] px-8 py-3 text-sm font-bold text-white shadow-[0_8px_22px_rgba(234,31,92,0.3)] transition hover:-translate-y-0.5 hover:bg-[#d41851] md:px-10 md:text-[24px]"
+                className="mt-10 inline-flex rounded-full bg-[#ea1f5c] px-7 py-2.5 text-sm font-bold text-white shadow-[0_8px_22px_rgba(234,31,92,0.3)] transition hover:-translate-y-0.5 hover:bg-[#d41851] md:px-9 md:text-[20px]"
               >
                 Create My Biodata
               </a>
 
-              <p className="mt-8 flex items-center justify-center gap-2 text-[24px] text-[#3a3a40] md:justify-start">
+              <p className="mt-6 flex items-center justify-center gap-2 text-[20px] text-[#3a3a40] md:justify-start">
                 <LiveBiodataCount />
               </p>
             </header>
 
-            <div className="relative hidden min-h-[540px] md:block lg:min-h-[640px]">
-              <div className="absolute right-40 top-24 h-[440px] w-[305px] rotate-[-11deg] overflow-hidden rounded-sm border-[3px] border-[#b57b34] bg-white shadow-[0_26px_45px_rgba(70,55,30,0.2)] lg:right-48 lg:h-[500px] lg:w-[340px]">
+            <div className="relative hidden min-h-[460px] md:block md:pr-8 lg:min-h-[520px] lg:pr-10">
+              <div className="absolute right-[8.25rem] top-[6.75rem] h-[320px] w-[225px] rotate-[-10deg] overflow-hidden rounded-sm border-[3px] border-[#b57b34] bg-white shadow-[0_26px_45px_rgba(70,55,30,0.2)] lg:right-[10.25rem] lg:top-[7.25rem] lg:h-[350px] lg:w-[245px]">
                 <Image
                   src="https://biodatamaker.app/_next/image?url=%2Fimages%2Fexamples%2Fwhite-brown-theme-marriage-biodata-sample-format-girl.png&w=640&q=75"
                   alt="Marriage biodata preview"
@@ -145,7 +153,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="absolute right-4 top-4 h-[500px] w-[345px] overflow-hidden rounded-sm border-[5px] border-[#d4a35f] bg-white shadow-[0_26px_45px_rgba(70,55,30,0.25)] lg:right-6 lg:h-[560px] lg:w-[390px]">
+              <div className="absolute right-[2.25rem] top-[1.5rem] h-[390px] w-[270px] overflow-hidden rounded-sm border-[5px] border-[#d4a35f] bg-white shadow-[0_26px_45px_rgba(70,55,30,0.25)] lg:right-[3.25rem] lg:top-[2rem] lg:h-[430px] lg:w-[300px]">
                 <Image
                   src="https://biodatamaker.app/_next/image?url=%2Fimages%2Fexamples%2Fpopular-hindu-marriage-biodata-format.png&w=640&q=75"
                   alt="Marriage biodata central preview"
@@ -155,7 +163,7 @@ export default function Home() {
                 />
               </div>
 
-              <div className="absolute right-[-42px] top-44 h-[410px] w-[285px] rotate-[10deg] overflow-hidden rounded-sm border border-[#d8d5d7] bg-[#f5efed] shadow-[0_20px_35px_rgba(72,72,72,0.2)] lg:right-[-36px] lg:h-[455px] lg:w-[315px]">
+              <div className="absolute right-[0.75rem] top-[9.25rem] h-[300px] w-[210px] rotate-[10deg] overflow-hidden rounded-sm border border-[#d8d5d7] bg-[#f5efed] shadow-[0_20px_35px_rgba(72,72,72,0.2)] lg:right-[1.25rem] lg:top-[10rem] lg:h-[330px] lg:w-[230px]">
                 <Image
                   src="https://biodatamaker.app/_next/image?url=%2Fimages%2Fexamples%2Felegant-marriage-biodata-sample-boy.png&w=640&q=75"
                   alt="Marriage biodata side preview"
@@ -169,7 +177,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="templates" className="bg-[#e8e7ef] px-4 pb-14 pt-10 md:pb-20 md:pt-14">
+      <section
+        id="templates"
+        className="bg-[#e8e7ef] px-4 pb-14 pt-10 md:pb-20 md:pt-14"
+      >
         <div className="mx-auto w-full max-w-6xl">
           <h2 className="text-center text-3xl font-extrabold text-[#2e1f17] md:text-4xl">
             Beautifully Handcrafted Marriage Biodata Templates
@@ -314,7 +325,9 @@ export default function Home() {
                 </div>
 
                 <div className="mt-3 text-[#f3b21d]">★★★★★</div>
-                <h4 className="mt-3 text-base font-bold text-[#1f2b3b]">{item.title}</h4>
+                <h4 className="mt-3 text-base font-bold text-[#1f2b3b]">
+                  {item.title}
+                </h4>
 
                 <p className="mt-2 text-sm leading-relaxed text-[#4a5f76]">
                   {item.text}
@@ -368,14 +381,16 @@ export default function Home() {
             <p className="mt-4 text-sm leading-[1.55] text-[#f5f7fd] md:text-base">
               We understand the importance of finding the right match and
               believe that a great biodata is the first step in that journey.
-              That&apos;s why we have made our tool easy to use and customizable,
-              allowing you to create a beautiful biodata that truly represents
-              you.
+              That&apos;s why we have made our tool easy to use and
+              customizable, allowing you to create a beautiful biodata that
+              truly represents you.
             </p>
           </div>
 
           <div>
-            <h3 className="text-xl font-semibold text-[#e8ebf4]">Connect with us</h3>
+            <h3 className="text-xl font-semibold text-[#e8ebf4]">
+              Connect with us
+            </h3>
             <div className="mt-4 flex items-center gap-3">
               <a
                 href="mailto:support@biodatamaker.app"
@@ -416,7 +431,9 @@ export default function Home() {
             <div className="mt-8">
               <p className="text-xl font-bold text-white md:text-2xl">Google</p>
               <div className="mt-2 flex items-center gap-3 text-[#f3c72f]">
-                <span className="text-xl font-bold text-[#f5f7fd] md:text-2xl">4.6</span>
+                <span className="text-xl font-bold text-[#f5f7fd] md:text-2xl">
+                  4.6
+                </span>
                 <Star className="h-6 w-6 fill-current" />
                 <Star className="h-6 w-6 fill-current" />
                 <Star className="h-6 w-6 fill-current" />
@@ -437,11 +454,36 @@ export default function Home() {
           <div>
             <h3 className="text-xl font-semibold text-[#e8ebf4]">Support</h3>
             <div className="mt-4 space-y-3 text-sm md:text-base">
-              <a href="#" className="block text-[#f5f7fd] transition hover:text-white">Terms of Service</a>
-              <a href="#" className="block text-[#f5f7fd] transition hover:text-white">Privacy Policy</a>
-              <a href="#" className="block text-[#f5f7fd] transition hover:text-white">Refund Policy</a>
-              <a href="#" className="block text-[#f5f7fd] transition hover:text-white">Shipping and Delivery Policy</a>
-              <a href="#" className="block text-[#f5f7fd] transition hover:text-white">Contact Us</a>
+              <a
+                href="#"
+                className="block text-[#f5f7fd] transition hover:text-white"
+              >
+                Terms of Service
+              </a>
+              <a
+                href="#"
+                className="block text-[#f5f7fd] transition hover:text-white"
+              >
+                Privacy Policy
+              </a>
+              <a
+                href="#"
+                className="block text-[#f5f7fd] transition hover:text-white"
+              >
+                Refund Policy
+              </a>
+              <a
+                href="#"
+                className="block text-[#f5f7fd] transition hover:text-white"
+              >
+                Shipping and Delivery Policy
+              </a>
+              <a
+                href="#"
+                className="block text-[#f5f7fd] transition hover:text-white"
+              >
+                Contact Us
+              </a>
             </div>
           </div>
 
