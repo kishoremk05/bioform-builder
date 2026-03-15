@@ -1,0 +1,5 @@
+{
+  "name": "Biodata Maker",
+  "description": "A simple web application to create and save your biodata using Next.js and Firebase.",
+  "requestFramePermissions": []
+}

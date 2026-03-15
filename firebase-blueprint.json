@@ -1,0 +1,26 @@
+{
+  "entities": {
+    "Biodata": {
+      "title": "Biodata",
+      "description": "User biodata information",
+      "type": "object",
+      "properties": {
+        "fullName": { "type": "string", "description": "Full name of the user" },
+        "email": { "type": "string", "format": "email", "description": "Email address" },
+        "phone": { "type": "string", "description": "Phone number" },
+        "address": { "type": "string", "description": "Physical address" },
+        "education": { "type": "string", "description": "Education details" },
+        "skills": { "type": "string", "description": "Skills list" },
+        "experience": { "type": "string", "description": "Work experience" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Creation timestamp" }
+      },
+      "required": ["fullName", "email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/biodata/{docId}": {
+      "schema": "Biodata",
+      "description": "Collection of user biodata"
+    }
+  }
+}
