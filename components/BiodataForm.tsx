@@ -29,47 +29,32 @@ import {
   User,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { ImagePlus, Loader2, Save } from "lucide-react";
+import { ChevronDown, ImagePlus, Loader2, Save, Trash2 } from "lucide-react";
+
+interface ExtraField {
+  id: string;
+  label: string;
+  value: string;
+}
 
 interface BiodataFormData {
   fullName: string;
   dateOfBirth: string;
-  timeOfBirth: string;
   placeOfBirth: string;
-  height: string;
-  weight: string;
-  maritalStatus: string;
-  manglik: string;
-  motherTongue: string;
-  religion: string;
-  caste: string;
-  subCaste: string;
-  gotra: string;
+  timeOfBirth: string;
   rashi: string;
-  nakshatra: string;
-  education: string;
-  occupation: string;
-  company: string;
-  workLocation: string;
-  annualIncome: string;
   fatherName: string;
   fatherOccupation: string;
   motherName: string;
   motherOccupation: string;
   siblings: string;
-  familyType: string;
-  familyStatus: string;
+  contactPerson: string;
   contactNumber: string;
-  alternateContact: string;
   email: string;
   address: string;
-  city: string;
-  state: string;
-  country: string;
-  pincode: string;
-  hobbies: string;
-  aboutMe: string;
-  expectations: string;
+  personalExtraFields: ExtraField[];
+  familyExtraFields: ExtraField[];
+  contactExtraFields: ExtraField[];
 }
 
 type FieldErrors = Partial<Record<keyof BiodataFormData, string>>;
@@ -77,42 +62,21 @@ type FieldErrors = Partial<Record<keyof BiodataFormData, string>>;
 const initialFormData: BiodataFormData = {
   fullName: "",
   dateOfBirth: "",
-  timeOfBirth: "",
   placeOfBirth: "",
-  height: "",
-  weight: "",
-  maritalStatus: "",
-  manglik: "",
-  motherTongue: "",
-  religion: "",
-  caste: "",
-  subCaste: "",
-  gotra: "",
+  timeOfBirth: "",
   rashi: "",
-  nakshatra: "",
-  education: "",
-  occupation: "",
-  company: "",
-  workLocation: "",
-  annualIncome: "",
   fatherName: "",
   fatherOccupation: "",
   motherName: "",
   motherOccupation: "",
   siblings: "",
-  familyType: "",
-  familyStatus: "",
+  contactPerson: "",
   contactNumber: "",
-  alternateContact: "",
   email: "",
   address: "",
-  city: "",
-  state: "",
-  country: "",
-  pincode: "",
-  hobbies: "",
-  aboutMe: "",
-  expectations: "",
+  personalExtraFields: [],
+  familyExtraFields: [],
+  contactExtraFields: [],
 };
 
 const inputClassName =
@@ -167,48 +131,50 @@ const BiodataForm = () => {
         if (!querySnapshot.empty) {
           const latestDoc = querySnapshot.docs[0].data();
 
+          const normalizeExtraFields = (value: unknown): ExtraField[] => {
+            if (!Array.isArray(value)) return [];
+            return value
+              .map((item) => {
+                if (!item || typeof item !== "object") return null;
+                const field = item as Partial<ExtraField>;
+                const label =
+                  typeof field.label === "string" ? field.label : "";
+                const fieldValue =
+                  typeof field.value === "string" ? field.value : "";
+                const id =
+                  typeof field.id === "string" && field.id.trim().length > 0
+                    ? field.id
+                    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+                return { id, label, value: fieldValue };
+              })
+              .filter((item): item is ExtraField => Boolean(item));
+          };
+
           setFormData({
             fullName: String(latestDoc.fullName ?? ""),
             dateOfBirth: String(latestDoc.dateOfBirth ?? ""),
-            timeOfBirth: String(latestDoc.timeOfBirth ?? ""),
             placeOfBirth: String(latestDoc.placeOfBirth ?? ""),
-            height: String(latestDoc.height ?? ""),
-            weight: String(latestDoc.weight ?? ""),
-            maritalStatus: String(latestDoc.maritalStatus ?? ""),
-            manglik: String(latestDoc.manglik ?? ""),
-            motherTongue: String(latestDoc.motherTongue ?? ""),
-            religion: String(latestDoc.religion ?? ""),
-            caste: String(latestDoc.caste ?? ""),
-            subCaste: String(latestDoc.subCaste ?? ""),
-            gotra: String(latestDoc.gotra ?? ""),
+            timeOfBirth: String(latestDoc.timeOfBirth ?? ""),
             rashi: String(latestDoc.rashi ?? ""),
-            nakshatra: String(latestDoc.nakshatra ?? ""),
-            education: String(latestDoc.education ?? ""),
-            occupation: String(latestDoc.occupation ?? ""),
-            company: String(latestDoc.company ?? ""),
-            workLocation: String(latestDoc.workLocation ?? ""),
-            annualIncome: String(latestDoc.annualIncome ?? ""),
             fatherName: String(latestDoc.fatherName ?? ""),
             fatherOccupation: String(latestDoc.fatherOccupation ?? ""),
             motherName: String(latestDoc.motherName ?? ""),
             motherOccupation: String(latestDoc.motherOccupation ?? ""),
             siblings: String(latestDoc.siblings ?? ""),
-            familyType: String(latestDoc.familyType ?? ""),
-            familyStatus: String(latestDoc.familyStatus ?? ""),
+            contactPerson: String(latestDoc.contactPerson ?? ""),
             contactNumber: String(
               latestDoc.contactNumber ?? latestDoc.phone ?? "",
             ),
-            alternateContact: String(latestDoc.alternateContact ?? ""),
             email: String(latestDoc.email ?? activeUser?.email ?? ""),
             address: String(latestDoc.address ?? ""),
-            city: String(latestDoc.city ?? ""),
-            state: String(latestDoc.state ?? ""),
-            country: String(latestDoc.country ?? ""),
-            pincode: String(latestDoc.pincode ?? ""),
-            hobbies: String(latestDoc.hobbies ?? latestDoc.skills ?? ""),
-            aboutMe: String(latestDoc.aboutMe ?? ""),
-            expectations: String(
-              latestDoc.expectations ?? latestDoc.experience ?? "",
+            personalExtraFields: normalizeExtraFields(
+              latestDoc.personalExtraFields,
+            ),
+            familyExtraFields: normalizeExtraFields(
+              latestDoc.familyExtraFields,
+            ),
+            contactExtraFields: normalizeExtraFields(
+              latestDoc.contactExtraFields,
             ),
           });
 
@@ -290,14 +256,6 @@ const BiodataForm = () => {
       formData.contactNumber.trim().length < 7
     ) {
       errors.contactNumber = "Contact number should be at least 7 characters.";
-    }
-
-    if (
-      formData.alternateContact.trim() &&
-      formData.alternateContact.trim().length < 7
-    ) {
-      errors.alternateContact =
-        "Alternate contact should be at least 7 characters.";
     }
 
     if (formData.address.trim() && formData.address.trim().length < 3) {
@@ -461,6 +419,89 @@ const BiodataForm = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const createExtraField = (): ExtraField => ({
+    id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    label: "",
+    value: "",
+  });
+
+  const addExtraField = (section: "personal" | "family" | "contact") => {
+    setFormData((prev) => {
+      const nextField = createExtraField();
+      if (section === "personal") {
+        return {
+          ...prev,
+          personalExtraFields: [...prev.personalExtraFields, nextField],
+        };
+      }
+      if (section === "family") {
+        return {
+          ...prev,
+          familyExtraFields: [...prev.familyExtraFields, nextField],
+        };
+      }
+      return {
+        ...prev,
+        contactExtraFields: [...prev.contactExtraFields, nextField],
+      };
+    });
+  };
+
+  const updateExtraField = (
+    section: "personal" | "family" | "contact",
+    id: string,
+    key: "label" | "value",
+    value: string,
+  ) => {
+    const updateList = (list: ExtraField[]) =>
+      list.map((item) => (item.id === id ? { ...item, [key]: value } : item));
+
+    setFormData((prev) => {
+      if (section === "personal") {
+        return {
+          ...prev,
+          personalExtraFields: updateList(prev.personalExtraFields),
+        };
+      }
+      if (section === "family") {
+        return {
+          ...prev,
+          familyExtraFields: updateList(prev.familyExtraFields),
+        };
+      }
+      return {
+        ...prev,
+        contactExtraFields: updateList(prev.contactExtraFields),
+      };
+    });
+  };
+
+  const removeExtraField = (
+    section: "personal" | "family" | "contact",
+    id: string,
+  ) => {
+    const filterList = (list: ExtraField[]) =>
+      list.filter((item) => item.id !== id);
+    setFormData((prev) => {
+      if (section === "personal") {
+        return {
+          ...prev,
+          personalExtraFields: filterList(prev.personalExtraFields),
+        };
+      }
+      if (section === "family") {
+        return {
+          ...prev,
+          familyExtraFields: filterList(prev.familyExtraFields),
+        };
+      }
+      return {
+        ...prev,
+        contactExtraFields: filterList(prev.contactExtraFields),
+      };
+    });
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -679,630 +720,425 @@ const BiodataForm = () => {
 
       <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
         <form onSubmit={handleSubmit} className="space-y-6">
-          <h3 className="text-lg font-bold text-gray-800">
-            Personal Information
-          </h3>
+          <h3 className="text-lg font-bold text-gray-800">Personal Details</h3>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Full Name <span className="text-red-500">*</span>
-              </label>
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>
+                  Name <span className="text-red-500">(Required)</span>
+                </span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
                 name="fullName"
                 required
                 value={formData.fullName}
                 onChange={handleChange}
-                placeholder="Enter full name"
-                className={inputClassName}
+                placeholder="Enter Name"
+                className={`${inputClassName} mt-3`}
               />
               {fieldErrors.fullName && (
-                <p className="text-sm text-red-600">{fieldErrors.fullName}</p>
+                <p className="mt-2 text-sm text-red-600">
+                  {fieldErrors.fullName}
+                </p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Email Address <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter email"
-                className={inputClassName}
-              />
-              {fieldErrors.email && (
-                <p className="text-sm text-red-600">{fieldErrors.email}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Date Of Birth <span className="text-red-500">*</span>
-              </label>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>
+                  Date Of Birth <span className="text-red-500">(Required)</span>
+                </span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
                 name="dateOfBirth"
                 value={formData.dateOfBirth}
                 onChange={handleChange}
                 placeholder="DD/MM/YYYY"
-                className={inputClassName}
+                className={`${inputClassName} mt-3`}
               />
               {fieldErrors.dateOfBirth && (
-                <p className="text-sm text-red-600">
+                <p className="mt-2 text-sm text-red-600">
                   {fieldErrors.dateOfBirth}
                 </p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Time Of Birth
-              </label>
-              <input
-                type="text"
-                name="timeOfBirth"
-                value={formData.timeOfBirth}
-                onChange={handleChange}
-                placeholder="07:20 PM"
-                className={inputClassName}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Place Of Birth <span className="text-red-500">*</span>
-              </label>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>
+                  Place Of Birth{" "}
+                  <span className="text-red-500">(Required)</span>
+                </span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
                 name="placeOfBirth"
                 value={formData.placeOfBirth}
                 onChange={handleChange}
-                placeholder="Enter place of birth"
-                className={inputClassName}
+                placeholder="Enter Place Of Birth"
+                className={`${inputClassName} mt-3`}
               />
               {fieldErrors.placeOfBirth && (
-                <p className="text-sm text-red-600">
+                <p className="mt-2 text-sm text-red-600">
                   {fieldErrors.placeOfBirth}
                 </p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Mother Tongue
-              </label>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Time Of Birth</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
-                name="motherTongue"
-                value={formData.motherTongue}
+                name="timeOfBirth"
+                value={formData.timeOfBirth}
                 onChange={handleChange}
-                placeholder="Hindi"
-                className={inputClassName}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Height
-              </label>
-              <input
-                type="text"
-                name="height"
-                value={formData.height}
-                onChange={handleChange}
-                placeholder="5 feet 9 inches"
-                className={inputClassName}
+                placeholder="Select time"
+                className={`${inputClassName} mt-3`}
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Weight
-              </label>
-              <input
-                type="text"
-                name="weight"
-                value={formData.weight}
-                onChange={handleChange}
-                placeholder="70 kg"
-                className={inputClassName}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Marital Status
-              </label>
-              <select
-                name="maritalStatus"
-                value={formData.maritalStatus}
-                onChange={handleChange}
-                className={inputClassName}
-              >
-                <option value="">Select status</option>
-                <option value="Never Married">Never Married</option>
-                <option value="Divorced">Divorced</option>
-                <option value="Widowed">Widowed</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Manglik
-              </label>
-              <select
-                name="manglik"
-                value={formData.manglik}
-                onChange={handleChange}
-                className={inputClassName}
-              >
-                <option value="">Select option</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Partially">Partially</option>
-              </select>
-            </div>
-          </div>
-
-          <h3 className="text-lg font-bold text-gray-800">
-            Religious And Community Details
-          </h3>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Religion
-              </label>
-              <input
-                type="text"
-                name="religion"
-                value={formData.religion}
-                onChange={handleChange}
-                placeholder="Hindu"
-                className={inputClassName}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Caste
-              </label>
-              <input
-                type="text"
-                name="caste"
-                value={formData.caste}
-                onChange={handleChange}
-                placeholder="Brahmin"
-                className={inputClassName}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Sub Caste
-              </label>
-              <input
-                type="text"
-                name="subCaste"
-                value={formData.subCaste}
-                onChange={handleChange}
-                placeholder="Enter sub caste"
-                className={inputClassName}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Gotra
-              </label>
-              <input
-                type="text"
-                name="gotra"
-                value={formData.gotra}
-                onChange={handleChange}
-                placeholder="Enter gotra"
-                className={inputClassName}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Rashi
-              </label>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Rashi</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
                 name="rashi"
                 value={formData.rashi}
                 onChange={handleChange}
-                placeholder="Enter rashi"
-                className={inputClassName}
+                placeholder="Select an option"
+                className={`${inputClassName} mt-3`}
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Nakshatra
-              </label>
-              <input
-                type="text"
-                name="nakshatra"
-                value={formData.nakshatra}
-                onChange={handleChange}
-                placeholder="Enter nakshatra"
-                className={inputClassName}
-              />
-            </div>
-          </div>
+            {formData.personalExtraFields.map((field) => (
+              <div
+                key={field.id}
+                className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4"
+              >
+                <div className="flex items-center justify-between gap-2 text-sm font-semibold text-gray-700">
+                  <input
+                    type="text"
+                    value={field.label}
+                    onChange={(event) =>
+                      updateExtraField(
+                        "personal",
+                        field.id,
+                        "label",
+                        event.target.value,
+                      )
+                    }
+                    placeholder="Field title"
+                    className="w-full border-0 bg-transparent p-0 text-sm font-semibold text-gray-700 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeExtraField("personal", field.id)}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-orange-50 text-orange-500 hover:bg-orange-100"
+                    aria-label="Remove field"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={field.value}
+                  onChange={(event) =>
+                    updateExtraField(
+                      "personal",
+                      field.id,
+                      "value",
+                      event.target.value,
+                    )
+                  }
+                  placeholder="Enter value"
+                  className={`${inputClassName} mt-3`}
+                />
+              </div>
+            ))}
 
-          <h3 className="text-lg font-bold text-gray-800">
-            Education And Professional Details
-          </h3>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Education
-            </label>
-            <textarea
-              name="education"
-              rows={3}
-              value={formData.education}
-              onChange={handleChange}
-              placeholder="Enter education details"
-              className="w-full resize-none rounded-xl border border-orange-200 bg-orange-50/40 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-orange-400"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Occupation
-              </label>
-              <input
-                type="text"
-                name="occupation"
-                value={formData.occupation}
-                onChange={handleChange}
-                placeholder="Software Engineer"
-                className={inputClassName}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Company
-              </label>
-              <input
-                type="text"
-                name="company"
-                value={formData.company}
-                onChange={handleChange}
-                placeholder="Company name"
-                className={inputClassName}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Work Location
-              </label>
-              <input
-                type="text"
-                name="workLocation"
-                value={formData.workLocation}
-                onChange={handleChange}
-                placeholder="City or region"
-                className={inputClassName}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Annual Income
-              </label>
-              <input
-                type="text"
-                name="annualIncome"
-                value={formData.annualIncome}
-                onChange={handleChange}
-                placeholder="INR 8 LPA"
-                className={inputClassName}
-              />
-            </div>
+            <button
+              type="button"
+              onClick={() => addExtraField("personal")}
+              className="text-sm font-semibold text-teal-700 hover:text-teal-800"
+            >
+              + Add More Fields
+            </button>
           </div>
 
           <h3 className="text-lg font-bold text-gray-800">Family Details</h3>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Father&apos;s Name
-              </label>
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Father&apos;s Name</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
                 name="fatherName"
                 value={formData.fatherName}
                 onChange={handleChange}
-                placeholder="Enter father's name"
-                className={inputClassName}
+                placeholder="Enter Father's Name"
+                className={`${inputClassName} mt-3`}
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Father&apos;s Occupation
-              </label>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Father&apos;s Occupation</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
                 name="fatherOccupation"
                 value={formData.fatherOccupation}
                 onChange={handleChange}
-                placeholder="Enter father's occupation"
-                className={inputClassName}
+                placeholder="Enter Father's Occupation"
+                className={`${inputClassName} mt-3`}
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Mother&apos;s Name
-              </label>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Mother&apos;s Name</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
                 name="motherName"
                 value={formData.motherName}
                 onChange={handleChange}
-                placeholder="Enter mother's name"
-                className={inputClassName}
+                placeholder="Enter Mother's Name"
+                className={`${inputClassName} mt-3`}
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Mother&apos;s Occupation
-              </label>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Mother&apos;s Occupation</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
                 name="motherOccupation"
                 value={formData.motherOccupation}
                 onChange={handleChange}
-                placeholder="Enter mother's occupation"
-                className={inputClassName}
+                placeholder="Enter Mother's Occupation"
+                className={`${inputClassName} mt-3`}
               />
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Siblings
-              </label>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Siblings</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="text"
                 name="siblings"
                 value={formData.siblings}
                 onChange={handleChange}
-                placeholder="1 Brother, 1 Sister"
-                className={inputClassName}
+                placeholder="Enter Siblings"
+                className={`${inputClassName} mt-3`}
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Family Type
-              </label>
-              <select
-                name="familyType"
-                value={formData.familyType}
-                onChange={handleChange}
-                className={inputClassName}
+            {formData.familyExtraFields.map((field) => (
+              <div
+                key={field.id}
+                className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4"
               >
-                <option value="">Select type</option>
-                <option value="Nuclear">Nuclear</option>
-                <option value="Joint">Joint</option>
-              </select>
-            </div>
-          </div>
+                <div className="flex items-center justify-between gap-2 text-sm font-semibold text-gray-700">
+                  <input
+                    type="text"
+                    value={field.label}
+                    onChange={(event) =>
+                      updateExtraField(
+                        "family",
+                        field.id,
+                        "label",
+                        event.target.value,
+                      )
+                    }
+                    placeholder="Field title"
+                    className="w-full border-0 bg-transparent p-0 text-sm font-semibold text-gray-700 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeExtraField("family", field.id)}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-orange-50 text-orange-500 hover:bg-orange-100"
+                    aria-label="Remove field"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={field.value}
+                  onChange={(event) =>
+                    updateExtraField(
+                      "family",
+                      field.id,
+                      "value",
+                      event.target.value,
+                    )
+                  }
+                  placeholder="Enter value"
+                  className={`${inputClassName} mt-3`}
+                />
+              </div>
+            ))}
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Family Status
-            </label>
-            <select
-              name="familyStatus"
-              value={formData.familyStatus}
-              onChange={handleChange}
-              className={inputClassName}
+            <button
+              type="button"
+              onClick={() => addExtraField("family")}
+              className="text-sm font-semibold text-teal-700 hover:text-teal-800"
             >
-              <option value="">Select status</option>
-              <option value="Middle Class">Middle Class</option>
-              <option value="Upper Middle Class">Upper Middle Class</option>
-              <option value="Affluent">Affluent</option>
-            </select>
+              + Add More Fields
+            </button>
           </div>
 
           <h3 className="text-lg font-bold text-gray-800">Contact Details</h3>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Contact Number <span className="text-red-500">*</span>
-              </label>
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Contact Person</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
+              <input
+                type="text"
+                name="contactPerson"
+                value={formData.contactPerson}
+                onChange={handleChange}
+                placeholder="Enter Contact Person"
+                className={`${inputClassName} mt-3`}
+              />
+            </div>
+
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Contact Number</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
                 type="tel"
                 name="contactNumber"
                 value={formData.contactNumber}
                 onChange={handleChange}
-                placeholder="+91 98765 43210"
-                className={inputClassName}
+                placeholder="Enter Contact Number"
+                className={`${inputClassName} mt-3`}
               />
               {fieldErrors.contactNumber && (
-                <p className="text-sm text-red-600">
+                <p className="mt-2 text-sm text-red-600">
                   {fieldErrors.contactNumber}
                 </p>
               )}
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Alternate Contact
-              </label>
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Email ID</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
               <input
-                type="tel"
-                name="alternateContact"
-                value={formData.alternateContact}
+                type="email"
+                name="email"
+                required
+                value={formData.email}
                 onChange={handleChange}
-                placeholder="+91 90000 11111"
-                className={inputClassName}
+                placeholder="Enter Email ID"
+                className={`${inputClassName} mt-3`}
               />
-              {fieldErrors.alternateContact && (
-                <p className="text-sm text-red-600">
-                  {fieldErrors.alternateContact}
+              {fieldErrors.email && (
+                <p className="mt-2 text-sm text-red-600">{fieldErrors.email}</p>
+              )}
+            </div>
+
+            <div className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4">
+              <div className="flex items-center justify-between text-sm font-semibold text-gray-700">
+                <span>Residential Address</span>
+                <ChevronDown className="h-4 w-4 text-gray-500" />
+              </div>
+              <textarea
+                name="address"
+                rows={3}
+                value={formData.address}
+                onChange={handleChange}
+                placeholder="Enter Residential Address"
+                className="mt-3 w-full resize-none rounded-xl border border-orange-200 bg-orange-50/40 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-orange-400"
+              />
+              {fieldErrors.address && (
+                <p className="mt-2 text-sm text-red-600">
+                  {fieldErrors.address}
                 </p>
               )}
             </div>
-          </div>
 
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Address
-            </label>
-            <textarea
-              name="address"
-              rows={3}
-              value={formData.address}
-              onChange={handleChange}
-              placeholder="Enter full address"
-              className="w-full resize-none rounded-xl border border-orange-200 bg-orange-50/40 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-orange-400"
-            />
-            {fieldErrors.address && (
-              <p className="text-sm text-red-600">{fieldErrors.address}</p>
-            )}
-          </div>
+            {formData.contactExtraFields.map((field) => (
+              <div
+                key={field.id}
+                className="rounded-2xl border border-gray-200 bg-gray-50/60 p-4"
+              >
+                <div className="flex items-center justify-between gap-2 text-sm font-semibold text-gray-700">
+                  <input
+                    type="text"
+                    value={field.label}
+                    onChange={(event) =>
+                      updateExtraField(
+                        "contact",
+                        field.id,
+                        "label",
+                        event.target.value,
+                      )
+                    }
+                    placeholder="Field title"
+                    className="w-full border-0 bg-transparent p-0 text-sm font-semibold text-gray-700 focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeExtraField("contact", field.id)}
+                    className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-orange-50 text-orange-500 hover:bg-orange-100"
+                    aria-label="Remove field"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  value={field.value}
+                  onChange={(event) =>
+                    updateExtraField(
+                      "contact",
+                      field.id,
+                      "value",
+                      event.target.value,
+                    )
+                  }
+                  placeholder="Enter value"
+                  className={`${inputClassName} mt-3`}
+                />
+              </div>
+            ))}
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                City
-              </label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                onChange={handleChange}
-                placeholder="City"
-                className={inputClassName}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                State
-              </label>
-              <input
-                type="text"
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                placeholder="State"
-                className={inputClassName}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Country
-              </label>
-              <input
-                type="text"
-                name="country"
-                value={formData.country}
-                onChange={handleChange}
-                placeholder="Country"
-                className={inputClassName}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-sm font-semibold text-gray-700">
-                Pincode
-              </label>
-              <input
-                type="text"
-                name="pincode"
-                value={formData.pincode}
-                onChange={handleChange}
-                placeholder="Pincode"
-                className={inputClassName}
-              />
-            </div>
-          </div>
-
-          <h3 className="text-lg font-bold text-gray-800">
-            About And Partner Preferences
-          </h3>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Hobbies
-            </label>
-            <textarea
-              name="hobbies"
-              rows={3}
-              value={formData.hobbies}
-              onChange={handleChange}
-              placeholder="Reading, travel, music"
-              className="w-full resize-none rounded-xl border border-orange-200 bg-orange-50/40 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-orange-400"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              About Me
-            </label>
-            <textarea
-              name="aboutMe"
-              rows={4}
-              value={formData.aboutMe}
-              onChange={handleChange}
-              placeholder="Write a short introduction"
-              className="w-full resize-none rounded-xl border border-orange-200 bg-orange-50/40 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-orange-400"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700">
-              Partner Expectations
-            </label>
-            <textarea
-              name="expectations"
-              rows={4}
-              value={formData.expectations}
-              onChange={handleChange}
-              placeholder="Share preferred qualities and expectations"
-              className="w-full resize-none rounded-xl border border-orange-200 bg-orange-50/40 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-orange-400"
-            />
+            <button
+              type="button"
+              onClick={() => addExtraField("contact")}
+              className="text-sm font-semibold text-teal-700 hover:text-teal-800"
+            >
+              + Add More Fields
+            </button>
           </div>
 
           {message && (

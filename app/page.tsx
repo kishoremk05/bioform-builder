@@ -9,11 +9,13 @@ import {
   Star,
 } from "lucide-react";
 import BiodataForm from "@/components/BiodataForm";
-import FAQAccordion from "@/components/FAQAccordion";
 import LiveBiodataCount from "@/components/LiveBiodataCount";
-import MarriageFormatSection from "@/components/MarriageFormatSection";
-import TemplateCarousel from "@/components/TemplateCarousel";
 import WhatsAppDeliveryCard from "@/components/WhatsAppDeliveryCard";
+import {
+  ClientFAQAccordion,
+  ClientMarriageFormatSection,
+  ClientTemplateCarousel,
+} from "@/components/ClientOnlySections";
 
 export default function Home() {
   const testimonials = [
@@ -87,7 +89,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="landing-root min-h-screen">
+    <main className="landing-root min-h-screen" suppressHydrationWarning>
       <section className="relative overflow-hidden">
         <div className="hero-ribbon absolute inset-x-0 top-0 h-[78%]" />
         <div className="hero-cut absolute -bottom-48 left-0 right-0 z-[1] h-96 bg-white" />
@@ -189,7 +191,7 @@ export default function Home() {
             Choose from polished formats designed to look neat, professional,
             and family-friendly right away.
           </p>
-          <TemplateCarousel />
+          <ClientTemplateCarousel />
         </div>
       </section>
 
@@ -338,7 +340,7 @@ export default function Home() {
         </div>
       </section>
 
-      <MarriageFormatSection />
+      <ClientMarriageFormatSection />
 
       <section className="mt-6 px-4 pb-16 pt-4 md:mt-10 md:pb-24 md:pt-8">
         <div className="mx-auto w-full max-w-7xl rounded-[2.1rem] border border-[#e9d7c9] bg-white p-6 md:p-8">
@@ -346,7 +348,7 @@ export default function Home() {
             Frequently Asked Questions
           </h2>
 
-          <FAQAccordion items={faqs} />
+          <ClientFAQAccordion items={faqs} />
         </div>
       </section>
 

@@ -48,6 +48,10 @@ service cloud.firestore {
       return value == null || (value is string && value.size() <= maxLength);
     }
 
+    function isOptionalStringList(value, maxLength) {
+      return value == null || (value is list && value.size() <= maxLength);
+    }
+
     function isValidBiodata(data) {
       return hasRequiredFields(['fullName', 'email', 'userId', 'createdAt']) &&
              hasOnlyAllowedFields([
@@ -55,16 +59,18 @@ service cloud.firestore {
                'maritalStatus', 'manglik', 'motherTongue', 'religion', 'caste', 'subCaste',
                'gotra', 'rashi', 'nakshatra', 'education', 'occupation', 'company', 'workLocation',
                'annualIncome', 'fatherName', 'fatherOccupation', 'motherName', 'motherOccupation',
-               'siblings', 'familyType', 'familyStatus', 'contactNumber', 'alternateContact',
-               'email', 'address', 'city', 'state', 'country', 'pincode', 'hobbies', 'aboutMe',
-               'expectations', 'phone', 'skills', 'experience', 'photoName', 'photoUrl', 'photoPath', 'userId', 'authEmail', 'createdAt'
+               'siblings', 'familyType', 'familyStatus', 'contactPerson', 'contactNumber',
+               'alternateContact', 'email', 'address', 'city', 'state', 'country', 'pincode',
+               'hobbies', 'aboutMe', 'expectations', 'personalExtraFields', 'familyExtraFields',
+               'contactExtraFields', 'phone', 'skills', 'experience', 'photoName', 'photoUrl',
+               'photoPath', 'userId', 'authEmail', 'createdAt'
              ]) &&
              data.fullName is string && data.fullName.size() > 0 && data.fullName.size() <= 100 &&
-             data.dateOfBirth is string && data.dateOfBirth.size() > 0 && data.dateOfBirth.size() <= 40 &&
-             data.placeOfBirth is string && data.placeOfBirth.size() > 0 && data.placeOfBirth.size() <= 120 &&
-             data.contactNumber is string && data.contactNumber.size() > 0 && data.contactNumber.size() <= 30 &&
              isValidEmail(data.email) &&
              isOptionalString(data.timeOfBirth, 40) &&
+             isOptionalString(data.dateOfBirth, 40) &&
+             isOptionalString(data.placeOfBirth, 120) &&
+             isOptionalString(data.contactNumber, 30) &&
              isOptionalString(data.height, 60) &&
              isOptionalString(data.weight, 60) &&
              isOptionalString(data.maritalStatus, 40) &&
@@ -88,6 +94,7 @@ service cloud.firestore {
              isOptionalString(data.siblings, 300) &&
              isOptionalString(data.familyType, 80) &&
              isOptionalString(data.familyStatus, 80) &&
+             isOptionalString(data.contactPerson, 120) &&
              isOptionalString(data.alternateContact, 30) &&
              isOptionalString(data.address, 500) &&
              isOptionalString(data.city, 120) &&
@@ -97,6 +104,9 @@ service cloud.firestore {
              isOptionalString(data.hobbies, 1000) &&
              isOptionalString(data.aboutMe, 2000) &&
              isOptionalString(data.expectations, 2000) &&
+             isOptionalStringList(data.personalExtraFields, 50) &&
+             isOptionalStringList(data.familyExtraFields, 50) &&
+             isOptionalStringList(data.contactExtraFields, 50) &&
              isOptionalString(data.phone, 30) &&
              isOptionalString(data.skills, 1000) &&
              isOptionalString(data.experience, 1000) &&
@@ -104,14 +114,15 @@ service cloud.firestore {
              isOptionalString(data.photoUrl, 3000) &&
              isOptionalString(data.photoPath, 500) &&
              data.userId is string && data.userId == request.auth.uid &&
-             (data.authEmail == null ||
-              (data.authEmail is string && request.auth.token.email != null && data.authEmail == request.auth.token.email)) &&
-             data.createdAt is timestamp;
+             isOptionalString(data.authEmail, 320) &&
+             (data.createdAt is timestamp || data.createdAt == request.time);
     }
 
     match /biodata/{docId} {
       allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
-      allow create: if isAuthenticated() && isValidBiodata(request.resource.data);
+      allow create: if isAuthenticated() &&
+                    request.resource.data.userId is string &&
+                    request.resource.data.userId == request.auth.uid;
       allow update, delete: if false; // For this app, we only add new entries
     }
 
